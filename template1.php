@@ -1,63 +1,111 @@
-
-<head>
-    <title>Template 1</title>
-    <link href="style.css" rel="stylesheet" type="text/css">
-</head>
-<body>
-<div class="template1">
 <?php
-  // Create database connection
-  $db = mysqli_connect("localhost:8889","root","123","temp") or die("could not connect to server");
-
-  // Initialize message variable
-  $msg = "";
-
-  // If upload button is clicked ...
-  if (isset($_POST['upload'])) {
-    $finame=$_POST['firstname'];
-    $laname=$_POST['lastname'];
-    $image_text = $_POST['image_text'];
-    $template = $_POST['template'];
-    $address = $_POST['address'];
-    
-  	// Get image name
-  	$image = $_FILES['image']['name'];
-  	$directory = date("Y").'/'.date("m").'/'.date("d").'/';
-    //If the directory doesn't already exists.
-    if(!is_dir($directory)){
-        //Create our directory.
-        mkdir($directory, 755, true);
-    }
-  	// image file directory
-  	$target = $directory.basename($image);
-
-  	$sql = "UPDATE person SET fname='$finame', sname='$laname', image='$image', about='$image_text', template='$template', address='$address' where id=1";
-  	// execute query
-  	mysqli_query($db, $sql);
-
-  	if (move_uploaded_file($_FILES['image']['tmp_name'], $target)) {
-  		$msg = "Image uploaded successfully";
-    }
-    else{
-  		$msg = "Failed to upload image";
-  	}
-  }
-  $result = mysqli_query($db, "SELECT * FROM person");
+include("header.php");
 ?>
 
+
 <?php
-    while ($row = mysqli_fetch_array($result)) {
-      echo "<div id='img_div'>";
-      	echo "<img src='".$directory."/".$row['image']."'  style='width:200px; height:200px;'>";
-        echo "<p>".$row['about']."</p>";
-        echo "<p>".$row['fname']."</p>";
-        echo "<p>".$row['sname']."</p>";
-        echo "<p>".$row['address']."</p>";
-      echo "</div>";
-    }
-?>
+$db = mysqli_connect("localhost:8889", "root", "123", "temp") or die("could not connect to server");
+$result = mysqli_query($db, "SELECT * FROM person");
+$directory = date("Y") . '/' . date("m") . '/' . date("d") . '/';
+while ($row = mysqli_fetch_array($result)) { ?>
 
-</div>
+  <div class="container">
+    <div id="template1-header">
+      <img class='rounded-circle' src="<?= $directory . $row['image'] ?>" alt='Card image' id='image_field' style='width:200px; 
+                      height:200px;  
+                      margin-left: 50px; 
+                      margin-top:80px; 
+                      border: 5px solid white; '>
+      <div style="display:inline-block; margin-left: 500px; text-align:center; position:sticky; margin-top:30px">
+        <p id='fname_field' style=" color:white; font-size: 40px; display: inline; postiion: fixed;"><?= $row['fname'] ?></p>
+        <p id='lname_field' style=" color:white; font-size: 40px; display: inline; postiion: fixed;"><?= $row['sname'] ?></p>
+        <p style='margin: 0 auto; color:gray; font-size:20px; color:wheat; margin-top:0px;'>
+                         <ul class="social list-inline">
+                              <?php $query = mysqli_query($db, "SELECT t.twitter, t.gplus, t.linkedin, t.github, t.facebook FROM person p INNER JOIN social t ON p.id = t.id;");
+                                   while ($rw = mysqli_fetch_array($query)) { ?>
+                                        <li class="list-inline-item"><a href="<?= $rw['twitter'] ?>" target="_blank"><i class="fab fa-twitter"></i></a></li>
+                                        <li class="list-inline-item"><a href="<?= $rw['gplus'] ?>" target="_blank"><i class="fab fa-google-plus-g"></i></a></li>
+                                        <li class="list-inline-item"><a href="<?= $rw['linkedin'] ?>" target="_blank"><i class="fab fa-linkedin-in"></i></a></li>
+                                        <li class="list-inline-item"><a href="<?= $rw['github'] ?>" target="_blank"><i class="fab fa-github-alt"></i></a></li>
+                                        <li class="list-inline-item last-item"><a href="<?= $rw['facebook'] ?>" target="_blank"><i class="fab fa-facebook-f"></i></a></li>
+                                   <?php } ?>
+                         </ul>
+                    </p>
+
+      </div>
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <div class=".CV-introBlurb">
+
+    </div>
+    <p style='margin: 0 auto; color:gray; font-size:20px; font-family: Kaushan Script, cursive;
+                      color:gray; margin-top:0px; width: 80%;
+                      margin: 1em auto 1em auto;
+                      text-align: center;
+                      font-size: 0.8em;' id='text_field'><?= $row['about'] ?></p>
+    <hr>
+    <div class="row">
+      <!-- <div class="col-sm-12 work-experience"> -->
+      <div class="card work-experience">
+        <div class="card-body">
+          <h3 class="card-title">Work Experience</h3>
+          <strong>Experience:</strong>
+          <p id='experience_field'><?= $row['experience'] ?></p>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <!-- <div class="col-sm-12 work-experience"> -->
+      <div class="card work-experience">
+
+        <div class="card-body">
+          <h3 class="card-title">Personal Info</h3>
+          <strong>Email:</strong>
+          <p id='email_field'><?= $row['email'] ?></p>
+          <strong>Address:</strong>
+          <p id='address_field'><?= $row['address'] ?></p>
+
+          <!-- printing here  -->
+          <strong>Skills:</strong>
+          <?php $query = mysqli_query($db, "SELECT name FROM tagslist");
+
+          while ($rw = mysqli_fetch_array($query)) { ?>
+            <p id='address_field'><?= $rw['name'] ?></p>
+          <?php } ?>
 
 
+        </div>
+      </div>
+    </div>
+    <div class="row">
+               <div class="card work-experience">
+                    <div class="card-body">
+                         <h3 class="card-title">Work Performance</h3>
+                         <?php $query = mysqli_query($db, "SELECT t.servproject, t.jobdesc, t.atnrec, t.lor FROM person p INNER JOIN workperformance t ON p.id = t.id;");
+                         while ($rw = mysqli_fetch_array($query)) { ?>
+                              <div id='servproject_field' class="dynamic_remove"><strong>Service Project: </strong><br><?= $rw['servproject'] ?></div><br>
+                              <div id='jobdesc_field' class="dynamic_remove"><strong>Job Description: </strong><br><?= $rw['jobdesc'] ?></div><br>
+                              <div id='atnrec_field' class="dynamic_remove"><strong>Attendance Record: </strong><br><?= $rw['atnrec'] ?></div><br>
+                              <div id='lor_field' class="dynamic_remove"><strong>Letter of Reccomendation: </strong><br><?= $rw['lor'] ?></div>
+                         <?php } ?>
+                         
+                    </div>
+               </div>
+          </div>
+  </div>
+
+
+
+  </div>
+
+
+  <form method="POST" action="temp1dash.php">
+    <button class="btn btn-primary">Dashboard</button>
+  </form>
+  </div>
+
+<?php } ?>
 </body>
