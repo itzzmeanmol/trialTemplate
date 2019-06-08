@@ -1,33 +1,18 @@
 <?php
+  echo 'hello';
+	$db = mysqli_connect("localhost:8889", "root", "123", "temp") or die("could not connect to server");
+	$skill = $_POST['skill'];
+	// $qry = mysqli_query($db, "SELECT id from person;");
+// 	if ($qry !== false) {
+// 		$value = mysqli_fetch_field($qry);
+// 		alert($value);
+//   }
+	
+	$sql ="INSERT INTO tagslist(name,uid)"."values('$skill',1)" ;
+	//$sql="insert into ROOMS(L_EMAIL,LOCATION,RENT,ADDRESS,IMAGE,RENTED_TO)"."values('$primary','$locality','$rent','$address','$image',NULL)";
 
-$host = "localhost"; /* Host name */
-$user = "root"; /* User */
-$password = ""; /* Password */
-$dbname = "tutorial"; /* Database name */
 
-$con = mysqli_connect($host, $user, $password,$dbname);
-// Check connection
-if (!$con) {
-  die("Connection failed: " . mysqli_connect_error());
-}
+ 	$result = $db->query($sql);
+ 	header("Location: temp1dash.php");
 
-
-$id = $_POST['id'];
-
-if($id > 0){
-
-  // Check record exists
-  $checkRecord = mysqli_query($con,"SELECT * FROM posts WHERE id=".$id);
-  $totalrows = mysqli_num_rows($checkRecord);
-
-  if($totalrows > 0){
-    // Delete record
-    $query = "DELETE FROM posts WHERE id=".$id;
-    mysqli_query($con,$query);
-    echo 1;
-    exit;
-  }
-}
-
-echo 0;
-exit;
+ ?>

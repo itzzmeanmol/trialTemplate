@@ -1,5 +1,9 @@
 <?php
 
+// Initialize the session
+session_start();
+   $id = $_SESSION['id'];
+
 // Create database connection
 $db = mysqli_connect("localhost:8889", "root", "123", "temp") or die("could not connect to server");
 
@@ -39,9 +43,9 @@ if (isset($_POST['firstname'])) {
    // image file directory
    $target = $directory . basename($image);
 
-   $sql = "UPDATE person SET fname='$finame', sname='$laname', image='$image', about='$image_text', template='$template', address='$address', email='$email', experience='$experience'  where id=1";
-   $query = "UPDATE workperformance SET servproject='$servproject', jobdesc='$jobdesc', atnrec='$atnrec', lor='$lor' where id=1";
-   $qry = "UPDATE social SET twitter='$twitter', gplus='$gplus', linkedin='$linkedin', github='$github', facebook='$facebook' where id=1";
+   $sql = "UPDATE person SET fname='$finame', sname='$laname', image='$image', about='$image_text', template='$template', address='$address', email='$email', experience='$experience' , welcome='no' where id=$id";
+   $query = "UPDATE workperformance SET servproject='$servproject', jobdesc='$jobdesc', atnrec='$atnrec', lor='$lor' where id=$id";
+   $qry = "UPDATE social SET twitter='$twitter', gplus='$gplus', linkedin='$linkedin', github='$github', facebook='$facebook' where id=$id";
    // execute query
    mysqli_query($db, $sql);
    mysqli_query($db, $query);
@@ -54,5 +58,4 @@ if (isset($_POST['firstname'])) {
    }
    header('Location: temp1dash.php');
 }
-
-?>
+?> 

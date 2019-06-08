@@ -1,11 +1,24 @@
 <?php
+// Initialize the session
+session_start();
+ 
+// Check if the user is logged in, if not then redirect him to login page
+if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
+    header("location: login.php");
+    exit;
+}
+?>
+<?php
 include("header.php");
 ?>
 
 
 <?php
+
 $db = mysqli_connect("localhost:8889", "root", "123", "temp") or die("could not connect to server");
-$result = mysqli_query($db, "SELECT * FROM person");
+$id = $_SESSION['id'];
+$result = mysqli_query($db, "SELECT * FROM person WHERE id = $id");
+
 $directory = date("Y") . '/' . date("m") . '/' . date("d") . '/';
 while ($row = mysqli_fetch_array($result)) { ?>
 
@@ -21,7 +34,7 @@ while ($row = mysqli_fetch_array($result)) { ?>
         <p id='lname_field' style=" color:white; font-size: 40px; display: inline; postiion: fixed;"><?= $row['sname'] ?></p>
         <p style='margin: 0 auto; color:gray; font-size:20px; color:wheat; margin-top:0px;'>
                          <ul class="social list-inline">
-                              <?php $query = mysqli_query($db, "SELECT t.twitter, t.gplus, t.linkedin, t.github, t.facebook FROM person p INNER JOIN social t ON p.id = t.id;");
+                         <?php $query = mysqli_query($db, "SELECT * FROM social WHERE id = '$id' ;");
                                    while ($rw = mysqli_fetch_array($query)) { ?>
                                         <li class="list-inline-item"><a href="<?= $rw['twitter'] ?>" target="_blank"><i class="fab fa-twitter"></i></a></li>
                                         <li class="list-inline-item"><a href="<?= $rw['gplus'] ?>" target="_blank"><i class="fab fa-google-plus-g"></i></a></li>
@@ -84,7 +97,7 @@ while ($row = mysqli_fetch_array($result)) { ?>
                <div class="card work-experience">
                     <div class="card-body">
                          <h3 class="card-title">Work Performance</h3>
-                         <?php $query = mysqli_query($db, "SELECT t.servproject, t.jobdesc, t.atnrec, t.lor FROM person p INNER JOIN workperformance t ON p.id = t.id;");
+                         <?php $query = mysqli_query($db, "SELECT * FROM workperformance WHERE id = '$id';");
                          while ($rw = mysqli_fetch_array($query)) { ?>
                               <div id='servproject_field' class="dynamic_remove"><strong>Service Project: </strong><br><?= $rw['servproject'] ?></div><br>
                               <div id='jobdesc_field' class="dynamic_remove"><strong>Job Description: </strong><br><?= $rw['jobdesc'] ?></div><br>
@@ -108,4 +121,7 @@ while ($row = mysqli_fetch_array($result)) { ?>
   </div>
 
 <?php } ?>
+
+<h3><a href="logout.php" class="btn btn-danger">Sign Out of Your Account</a></h3>
+
 </body>
